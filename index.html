@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#155e75"><title>每日 7 词 · 英语学习</title><link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar"><div class="brand"><span class="brand-mark">7</span><div><h1>每日 7 词</h1><p>小朋友的英语复习卡</p></div></div><div class="today-chip" id="todayLabel"></div></header>
+    <section class="hero"><div><p class="eyebrow">TODAY'S REVIEW</p><h2>每天一点点，记得更牢</h2><p class="hero-copy">先想一想，再翻开答案。掌握的词会慢慢降低频率，不熟的词会在之后再次出现。</p></div><div class="streak-card"><span>连续复习</span><strong id="streakCount">0</strong><small>天</small></div></section>
+    <section class="stats" aria-label="学习统计"><div class="stat-card"><span class="stat-icon blue">✓</span><div><strong id="masteredCount">0</strong><span>已掌握</span></div></div><div class="stat-card"><span class="stat-icon amber">↻</span><div><strong id="dueCount">0</strong><span>待复习</span></div></div><div class="stat-card"><span class="stat-icon green">★</span><div><strong id="todayProgress">0/7</strong><span>今日进度</span></div></div></section>
+    <section class="review-panel" id="reviewPanel"><div class="progress-row"><span id="progressText">今日第 1 / 7 词</span><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div></div><article class="word-card" id="wordCard"><div class="card-topline"><span class="theme-tag" id="themeTag">主题</span><span class="difficulty" id="difficultyTag">基础</span></div><div class="word-area"><h3 id="wordText">loading</h3><p id="pronunciation"></p><button class="sound-button" id="soundButton" type="button">🔊 听发音</button></div><div class="answer-area" id="answerArea" hidden><div class="meaning" id="meaningText"></div><div class="part-of-speech" id="partOfSpeech"></div><p class="example" id="exampleText"></p><p class="collocations" id="collocationsText"></p><p class="error-point" id="errorPoint"></p></div><button class="reveal-button" id="revealButton" type="button">显示中文和例句</button><p class="think-hint" id="thinkHint">先在心里说出中文意思，再查看答案</p></article><div class="choice-actions" id="choiceActions" hidden><button class="choice-btn again" id="againButton" type="button"><span>↻</span><div><b>还不会</b><small>过两天再出现</small></div></button><button class="choice-btn know" id="knowButton" type="button"><span>✓</span><div><b>记住了</b><small>以后降低频率</small></div></button></div></section>
+    <section class="complete-panel" id="completePanel" hidden><div class="complete-icon">🎉</div><p class="eyebrow">WELL DONE</p><h2>今天的 7 个词完成了</h2><p>明天继续，熟悉的词会少出现，不熟的词会回来找你。</p><button class="secondary-button" id="reviewStatsButton" type="button">看看学习记录</button></section>
+    <section class="rule-note"><span>复习方式</span><p>简单词：答对后 14 天、30 天再出现。其他词：间隔 1、2、4、7、14、30 天逐步拉开。还不会：2 天后再次出现。</p></section><footer>词库 306 词 · 学习记录只保存在当前浏览器</footer>
+  </main><script src="app.js"></script>
+</body></html>
