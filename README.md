@@ -4,6 +4,10 @@
 
 http://localhost:4173/
 
+公网网址：
+
+https://645303401.github.io/english-learning-review/
+
 ## 启动
 
 在终端运行：
