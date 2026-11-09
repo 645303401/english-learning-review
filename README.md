@@ -24,3 +24,14 @@ https://645303401.github.io/english-learning-review/
 - 学习记录保存在当前浏览器的 localStorage，不需要登录或联网数据库。
 - 词库数据来自工程中的 `words.xlsx`，导出到 `data/words.json` 供网页读取。
 
+## 拍照录入后端
+
+拍照录入需要配置 Supabase：
+
+1. 在 Supabase SQL Editor 执行工程中的 `../supabase/schema.sql`。
+2. 将 Supabase 项目 URL 和 anon public key 填入 `config.js`。
+3. 将 `supabase/functions/ocr-capture/index.ts` 部署为 Edge Function。
+4. 在 Edge Function 环境变量中设置 `OPENAI_API_KEY`、`SUPABASE_SERVICE_ROLE_KEY` 和可选的 `OPENAI_VISION_MODEL`。
+
+service role key 和 OpenAI API key 只放在 Supabase 后端环境变量中，不要提交到 GitHub。
+
