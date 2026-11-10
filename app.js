@@ -33,10 +33,10 @@ async function loadWords(accessToken = ""){
   const config = window.SUPABASE_CONFIG || {};
   let additions = [];
   if (config.url && config.anonKey && accessToken) {
-    const response = await fetch(config.url + "/rest/v1/word_candidates?select=word,pronunciation,meaning,part_of_speech,example,collocations,theme,difficulty,error_point&status=eq.approved&order=created_at.asc", { headers: { apikey: config.anonKey, Authorization: "Bearer " + accessToken } });
+    const response = await fetch(config.url + "/rest/v1/user_words?select=english,pronunciation,chinese,part_of_speech,example,collocations,theme,difficulty,error_point&order=created_at.asc", { headers: { apikey: config.anonKey, Authorization: "Bearer " + accessToken } });
     if (response.ok) additions = await response.json();
   }
-  const online = additions.map(item => ({ id: String(item.word || "").trim().toLowerCase(), word: item.word || "", pronunciation: item.pronunciation || "", meaning: item.meaning || "", partOfSpeech: item.part_of_speech || "", example: item.example || "", collocations: item.collocations || "", theme: item.theme || "在线新增", difficulty: item.difficulty || "基础", errorPoint: item.error_point || "" }));
+  const online = additions.map(item => ({ id: String(item.english || "").trim().toLowerCase(), word: item.english || "", pronunciation: item.pronunciation || "", meaning: item.chinese || "", partOfSpeech: item.part_of_speech || "", example: item.example || "", collocations: item.collocations || "", theme: item.theme || "在线新增", difficulty: item.difficulty || "基础", errorPoint: item.error_point || "" }));
   const merged = [...base, ...online]; const seen = new Set(); words = merged.filter(item => { if (!item.id || seen.has(item.id)) return false; seen.add(item.id); return true; }); render();
 }
 loadWords().catch(() => { $("wordText").textContent = "词库加载失败"; $("thinkHint").textContent = "请确认网络连接正常"; });

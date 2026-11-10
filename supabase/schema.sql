@@ -34,8 +34,37 @@ create table if not exists public.word_candidates (
   status text not null default 'pending'
 );
 
+create table if not exists public.user_words (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id),
+  word_key text not null,
+  english text not null,
+  pronunciation text,
+  chinese text,
+  part_of_speech text,
+  example text,
+  collocations text,
+  mastery_status text default '未掌握',
+  proficiency text,
+  recent_review_date date,
+  next_review_date date,
+  review_count integer default 0,
+  error_count integer default 0,
+  note text,
+  theme text,
+  core_sentence text,
+  difficulty text,
+  error_point text,
+  generation_use text default '允许',
+  source text default 'manual',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique(user_id, word_key)
+);
+
 alter table public.capture_items enable row level security;
 alter table public.word_candidates enable row level security;
+alter table public.user_words enable row level security;
 
 drop policy if exists "authenticated can create capture records" on public.capture_items;
 drop policy if exists "authenticated can read capture records" on public.capture_items;
@@ -46,3 +75,4 @@ create policy "authenticated can create own capture records" on public.capture_i
 create policy "authenticated can read own capture records" on public.capture_items for select to authenticated using (auth.uid() = user_id);
 create policy "authenticated can read own approved candidates" on public.word_candidates for select to authenticated using (auth.uid() = user_id and status = 'approved');
 create policy "authenticated can upload own capture images" on storage.objects for insert to authenticated with check (bucket_id = 'word-captures' and (storage.foldername(name))[1] = 'captures' and (storage.foldername(name))[2] = auth.uid()::text);
+create policy "authenticated can manage own words" on public.user_words for all to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
