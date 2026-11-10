@@ -9,7 +9,8 @@ Deno.serve(async (request) => {
   try {
     const authHeader = request.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) return json(request, { error: "登录已失效，请重新登录" }, 401);
-    const userClient = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY") || Deno.env.get("SUPABASE_PUBLISHABLE_KEY") || "", { global: { headers: { Authorization: authHeader } } });
+    const clientKey = request.headers.get("apikey") || Deno.env.get("SUPABASE_ANON_KEY") || "";
+    const userClient = createClient(Deno.env.get("SUPABASE_URL")!, clientKey, { global: { headers: { Authorization: authHeader } } });
     const { data: { user }, error: authError } = await userClient.auth.getUser();
     if (authError || !user) return json(request, { error: "无法验证登录身份" }, 401);
     const { storagePath, sourceName } = await request.json();
