@@ -28,5 +28,17 @@ function showAnswer(){ if(!current) return; $("meaningText").textContent = curre
 function finish(result){ if(!current) return; const r = reviewOf(current); if(result === "know"){ const nextStreak = r.streak + 1; state.reviews[current.id] = { ...r, streak: nextStreak, mastered: true, correct: r.correct + 1, due: addDays(today(), nextKnownInterval(current, r)), lastSeen: today() }; } else { state.reviews[current.id] = { ...r, streak: 0, mastered: false, wrong: r.wrong + 1, due: addDays(today(), 2), lastSeen: today() }; } state.daily.completed.push(current.id); state.daily.index += 1; state.activity[today()] = true; saveState(); render(); }
 function speak(){ if(!current || !window.speechSynthesis) return; window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(current.word); u.lang = "en-US"; u.rate = .78; window.speechSynthesis.speak(u); }
 $("revealButton").addEventListener("click", showAnswer); $("knowButton").addEventListener("click", () => finish("know")); $("againButton").addEventListener("click", () => finish("again")); $("soundButton").addEventListener("click", speak); $("reviewStatsButton").addEventListener("click", () => { alert("已掌握 " + $("masteredCount").textContent + " 个词。待复习词会按计划再次出现。"); });
-fetch(DATA_URL).then(r => r.json()).then(data => { words = data; render(); }).catch(() => { $("wordText").textContent = "词库加载失败"; $("thinkHint").textContent = "请确认使用本地网址打开，而不是直接双击 HTML 文件"; });
+async function loadWords(accessToken = ""){
+  const base = await fetch(DATA_URL).then(r => r.json());
+  const config = window.SUPABASE_CONFIG || {};
+  let additions = [];
+  if (config.url && config.anonKey && accessToken) {
+    const response = await fetch(config.url + "/rest/v1/word_candidates?select=word,pronunciation,meaning,part_of_speech,example,collocations,theme,difficulty,error_point&status=eq.approved&order=created_at.asc", { headers: { apikey: config.anonKey, Authorization: "Bearer " + accessToken } });
+    if (response.ok) additions = await response.json();
+  }
+  const online = additions.map(item => ({ id: String(item.word || "").trim().toLowerCase(), word: item.word || "", pronunciation: item.pronunciation || "", meaning: item.meaning || "", partOfSpeech: item.part_of_speech || "", example: item.example || "", collocations: item.collocations || "", theme: item.theme || "在线新增", difficulty: item.difficulty || "基础", errorPoint: item.error_point || "" }));
+  const merged = [...base, ...online]; const seen = new Set(); words = merged.filter(item => { if (!item.id || seen.has(item.id)) return false; seen.add(item.id); return true; }); render();
+}
+loadWords().catch(() => { $("wordText").textContent = "词库加载失败"; $("thinkHint").textContent = "请确认网络连接正常"; });
+window.addEventListener("review-authenticated", event => { loadWords(event.detail?.access_token || "").catch(() => {}); });
 

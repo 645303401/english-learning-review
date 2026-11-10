@@ -44,5 +44,5 @@ drop policy if exists "authenticated can upload capture images" on storage.objec
 
 create policy "authenticated can create own capture records" on public.capture_items for insert to authenticated with check (auth.uid() = user_id);
 create policy "authenticated can read own capture records" on public.capture_items for select to authenticated using (auth.uid() = user_id);
-create policy "authenticated can read own pending candidates" on public.word_candidates for select to authenticated using (auth.uid() = user_id and status = 'pending');
+create policy "authenticated can read own approved candidates" on public.word_candidates for select to authenticated using (auth.uid() = user_id and status = 'approved');
 create policy "authenticated can upload own capture images" on storage.objects for insert to authenticated with check (bucket_id = 'word-captures' and (storage.foldername(name))[1] = 'captures' and (storage.foldername(name))[2] = auth.uid()::text);

@@ -16,7 +16,7 @@ function setCaptureStatus(text, kind = "") { captureStatus.textContent = text; c
 function isConfigured() { return Boolean(supabaseConfig.url && supabaseConfig.anonKey && window.supabase); }
 function isLoggedIn() { return Boolean(session?.access_token); }
 function authHeaders() { return { apikey: supabaseConfig.anonKey, Authorization: "Bearer " + session.access_token }; }
-function refreshCaptureState() { loginBox.hidden = isLoggedIn(); captureSubmit.disabled = !selectedFile || !isConfigured() || !isLoggedIn(); if (!isConfigured()) setCaptureStatus("需要先配置 Supabase 后端"); else if (!isLoggedIn()) setCaptureStatus("请先用邮箱登录"); else if (selectedFile) setCaptureStatus("照片已选择，可以开始识别"); }
+function refreshCaptureState() { loginBox.hidden = isLoggedIn(); captureSubmit.disabled = !selectedFile || !isConfigured() || !isLoggedIn(); if (isLoggedIn()) window.dispatchEvent(new CustomEvent("review-authenticated", { detail: session })); if (!isConfigured()) setCaptureStatus("需要先配置 Supabase 后端"); else if (!isLoggedIn()) setCaptureStatus("请先用邮箱登录"); else if (selectedFile) setCaptureStatus("照片已选择，可以开始识别"); }
 function openCapture() { captureModal.hidden = false; refreshCaptureState(); }
 function closeCapture() { captureModal.hidden = true; }
 
@@ -53,6 +53,6 @@ captureSubmit.addEventListener("click", async () => {
     if (!upload.ok) throw new Error("图片上传失败：" + await upload.text());
     const job = await fetch(supabaseConfig.url + "/functions/v1/ocr-capture", { method: "POST", headers: { ...authHeaders(), "Content-Type": "application/json" }, body: JSON.stringify({ storagePath, sourceName: selectedFile.name }) });
     const result = await job.json(); if (!job.ok) throw new Error(result.error || "OCR 处理失败");
-    setCaptureStatus("识别完成，已加入待确认词列表：" + (result.words || []).join("、"), "success"); captureSubmit.disabled = false;
+    setCaptureStatus("识别完成，已加入在线词库：" + (result.words || []).join("、"), "success"); captureSubmit.disabled = false;
   } catch (error) { setCaptureStatus(error.message || "处理失败，请稍后重试", "error"); captureSubmit.disabled = false; }
 });
